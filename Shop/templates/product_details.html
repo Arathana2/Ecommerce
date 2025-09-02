@@ -1,0 +1,227 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}
+    MyShop
+{% endblock title %}
+
+{% block content %}
+<section class="product-details-section py-4 my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h4 class="mb-3">{{ product.name |upper }} Details</h4>
+                <hr style="border-color:aliceblue;">
+                
+                <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                   <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                   <li class="breadcrumb-item"><a href="{% url 'categoriesview' product.category.name|default:'' %}">{{ product.category.name }}</a></li>
+                   <li class="breadcrumb-item active" aria-current="page">{{product}}</li>
+                  </ol>
+                </nav>
+
+            </div>
+            <div class="col-md-4 my-3">
+                <div class="product-image-container">
+                    <img src="{% if product.product_image %}{{ product.product_image.url }}{% else %}{% static 'images/default-product.jpg' %}{% endif %}" class="product-image card-img-top" alt="{{ product.name }}">
+                </div>
+            </div>
+            <div class="col-md-8 my-3">
+                {% if product.trending %}
+                <div class="hot-badge">HOT</div>
+                {% endif %}
+                <h5 class="text-success product-title">{{product |upper}}</h5>
+                <p class="product-description">{{product.description}}</p>
+                <div class="price-container">
+                    <h6 class="my-2 text-primary">Current Price : Rs.<s class="original-price">{{product.original_price}}</s></h6>
+                    <h6 class="my-2 text-danger offer-price">Offer Price : Rs.{{product.selling_price}}</h6>
+                </div>
+                    <div class="my-3">
+                     {% if product.quantity > 0 %}
+                     <input type="hidden" value="{{product.id}}" id="pid">
+                     {% csrf_token %}
+                      <div class="quantity-controls d-flex align-items-center">
+                        <div class="input-group" style="width: 150px;">
+                            <button class="quantity-btn input-group-text" id="btnMinus"><i class="fa fa-minus"></i></button>
+                              <input type="text" name="qty" id="txtQty" value="1" class="quantity-input form-control text-center">
+                            <button class="quantity-btn input-group-text" id="btnPlus"><i class="fa fa-plus"></i></button>
+                            
+                        </div>
+
+                        <div class="action-buttons ms-3">
+                            <button class="btn-cart" id="btnCart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+                            <div id="cartMessage" style="display:none;" class="alert-message alert alert-success mt-2"></div>
+                            {% else %}
+                            <button class="btn-out-of-stock"><i class="fa fa-minus"></i> Out of Stock</button>
+                            {% endif %}
+                            <button class="btn-wishlist" id="btnWishlist"><i class="fa fa-heart"></i> Add to Wishlist</button>
+                            <div id="wishlistMessage" style="display:none;" class="alert-message alert alert-success mt-2"></div>
+                        </div>
+                      </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the quantity input and buttons
+    const quantityInput = document.getElementById('txtQty');
+    const minusBtn = document.getElementById('btnMinus');
+    const plusBtn = document.getElementById('btnPlus');
+    const pid = document.getElementById('pid');
+    const btnCart = document.getElementById('btnCart');
+    const cartMessage = document.getElementById('cartMessage');
+    const btnWishlist = document.getElementById('btnWishlist');
+    const wishlistMessage = document.getElementById('wishlistMessage');
+
+    // Add loading state to buttons
+    function setLoading(button, isLoading) {
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = '<span class="loading-spinner"></span> Processing...';
+        } else {
+            button.disabled = false;
+            if (button.id === 'btnCart') {
+                button.innerHTML = '<i class="fa fa-shopping-cart"></i> Add to Cart';
+            } else {
+                button.innerHTML = '<i class="fa fa-heart"></i> Add to Wishlist';
+            }
+        }
+    }
+
+    // Add event listeners to buttons
+    if (minusBtn) {
+        minusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value) || 1;
+            if (currentValue > 1) {
+                quantityInput.value = currentValue - 1;
+            }
+        });
+    }
+
+    if (plusBtn) {
+        plusBtn.addEventListener('click', function() {
+            let currentValue = parseInt(quantityInput.value) || 1;
+            quantityInput.value = currentValue + 1;
+        });
+    }
+
+    // Add to cart functionality
+    if (btnCart) {
+        btnCart.addEventListener('click', function() {
+            const product_qty = quantityInput.value;
+            const product_id = pid.value;
+            
+            setLoading(btnCart, true);
+
+            fetch("{% url 'addtocart' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ product_qty: product_qty, pid: product_id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setLoading(btnCart, false);
+                if (data.status === 'Product added to cart successfully' || data.status === 'Cart updated successfully') {
+                    cartMessage.style.display = 'block';
+                    cartMessage.innerText = data.status;
+                    cartMessage.className = 'alert-message alert alert-success mt-2';
+                    // Optionally redirect to cart page after a delay
+                    setTimeout(() => {
+                        window.location.href = "{% url 'cart' %}";
+                    }, 2000);
+                } else {
+                    cartMessage.style.display = 'block';
+                    cartMessage.innerText = data.status;
+                    cartMessage.className = 'alert-message alert alert-danger mt-2';
+                }
+            })
+            .catch(error => {
+                setLoading(btnCart, false);
+                console.error('Error:', error);
+                cartMessage.style.display = 'block';
+                cartMessage.innerText = 'An error occurred while adding to cart. Please try again.';
+                cartMessage.className = 'alert-message alert alert-danger mt-2';
+            });
+        });
+    }
+
+    // Ensure the input only accepts numbers and has a minimum value of 1
+    if (quantityInput) {
+        quantityInput.addEventListener('input', function() {
+            let value = parseInt(this.value);
+            if (isNaN(value) || value < 1) {
+                this.value = 1;
+            } else {
+                this.value = value;
+            }
+        });
+
+        // Prevent form submission on enter key in quantity input
+        quantityInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Add to wishlist functionality
+    if (btnWishlist) {
+        btnWishlist.addEventListener('click', function() {
+            const product_id = pid.value;
+            
+            setLoading(btnWishlist, true);
+
+            fetch("{% url 'add_to_wishlist' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ pid: product_id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setLoading(btnWishlist, false);
+                if (data.status === 'Product added to wishlist successfully') {
+                    wishlistMessage.style.display = 'block';
+                    wishlistMessage.innerText = data.status;
+                    wishlistMessage.className = 'alert-message alert alert-success mt-2';
+                } else {
+                    wishlistMessage.style.display = 'block';
+                    wishlistMessage.innerText = data.status;
+                    wishlistMessage.className = 'alert-message alert alert-danger mt-2';
+                }
+            })
+            .catch(error => {
+                setLoading(btnWishlist, false);
+                console.error('Error:', error);
+                wishlistMessage.style.display = 'block';
+                wishlistMessage.innerText = 'An error occurred while adding to wishlist. Please try again.';
+                wishlistMessage.className = 'alert-message alert alert-danger mt-2';
+            });
+        });
+    }
+
+    // Add hover effects programmatically
+    const productImage = document.querySelector('.product-image-container');
+    if (productImage) {
+        productImage.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 12px 35px rgba(0, 0, 0, 0.15)';
+        });
+        
+        productImage.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.1)';
+        });
+    }
+});
+</script>
+{% endblock content %}

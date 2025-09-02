@@ -1,0 +1,498 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Categories
+{% endblock title %}
+{% block content %}
+<style>
+    /* Import Cormorant Garamond from Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+
+    /* General Body and Typography */
+    body {
+        font-family: 'Cormorant Garamond', serif;
+        color: #140303;
+        background-color: #f4f7f6; /* Soft neutral grey-blue */
+    }
+
+    /* Enhanced Elegant Styling with Animations */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 30px;
+        border-radius: 20px;
+        margin: 100px auto 50px;
+        max-width: 1200px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.8rem;
+        font-weight: 600; /* Made bolder */
+
+    .categories-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }}
+
+    .categories-header h1 {
+        font-size: 2.8rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .categories-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        text-align: center;
+        background: white;
+    }
+
+    .card-title {
+        font-family: 'Cormorant Garamond', serif;
+        color: #2c3e50 !important;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-body .text-primary {
+        font-family: 'Cormorant Garamond', serif;
+        color: #6c757d !important;
+        font-size: 1.2rem;
+        font-weight: 500;
+        flex-grow: 1;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .btn-primary {
+        margin-top: auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #ffffff;
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        font-family: 'Cormorant Garamond', serif;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .empty-state i {
+        font-size: 6rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    .empty-state p {
+        font-size: 1.4rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 20px;
+            margin: 80px auto 30px;
+        }
+        
+        .hero-section h1 {
+            font-size: 2.2rem;
+        }
+        
+        .hero-section p {
+            font-size: 1.4rem;
+        }
+        
+        .categories-header h1 {
+            font-size: 2.2rem;
+        }
+        
+        .card {
+            margin-bottom: 2rem;
+        }
+        
+        .card-img-top {
+            height: 220px;
+        }
+    }
+
+    /* Enhanced Elegant Styling with Animations */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 30px;
+        border-radius: 20px;
+        margin: 100px auto 50px;
+        max-width: 1200px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero-section p {
+        font-size: 1.8rem;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    .categories-header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease-out 0.2s both;
+    }
+
+    .categories-header h1 {
+        font-size: 2.8rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .categories-header h1::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        animation: slideInUp 0.6s ease-out;
+    }
+
+    .card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .card-img-top {
+        transform: scale(1.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        text-align: center;
+        background: white;
+    }
+
+    .card-title {
+        font-family: 'Cormorant Garamond', serif;
+        color: #2c3e50 !important;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-body .text-primary {
+        font-family: 'Cormorant Garamond', serif;
+        color: #6c757d !important;
+        font-size: 1.2rem;
+        font-weight: 500;
+        flex-grow: 1;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .btn-primary {
+        margin-top: auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #ffffff;
+        padding: 12px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        font-family: 'Cormorant Garamond', serif;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        animation: fadeIn 1s ease-out;
+    }
+
+    .empty-state i {
+        font-size: 6rem;
+        color: #dee2e6;
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+    }
+
+    .empty-state p {
+        font-size: 1.4rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 20px;
+            margin: 80px auto 30px;
+        }
+        
+        .hero-section h1 {
+            font-size: 2.2rem;
+        }
+        
+        .hero-section p {
+            font-size: 1.4rem;
+        }
+        
+        .categories-header h1 {
+            font-size: 2.2rem;
+        }
+        
+        .card {
+            margin-bottom: 2rem;
+        }
+        
+        .card-img-top {
+            height: 220px;
+        }
+    }
+</style>
+
+<section class="py-0 text-center container">
+    <div class="row py-lg-0">
+        <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="fw-bold"> Kid's</h1>
+            <p class="lead fw-bold text-center"><h1>New collections for new born babies</h1></p>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-4 my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-3 fw-bold">Categories</h1>
+                <hr style="border-color:rgb(220, 244, 245);">
+            </div>
+
+            {% for item in category %}
+            <div class="col-md-4 col-lg-3">
+                <div class="card my-3">
+                    <a href="{% url 'categoriesview' item.name %}">
+                        <img src="{{item.category_image.url}}" class="card-img-top" alt="{{ item.name }}">
+                    </a>
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ item.name }}</h5>
+                        <p class="text-primary">{{ item.description }}</p>
+                        <a href="{% url 'categoriesview' item.name %}" class="btn btn-primary btn-sm">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,52 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}
+    MyShop
+{% endblock title %}
+
+{% block content %}
+<section class="bg-light py-4 my-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% if category_name %}
+                    <h4 class="mb-3">{{category_name}} Products </h4>
+                {% else %}
+                    <h4 class="mb-3">All Products</h4>
+                {% endif %}
+                <hr style="border-color:aliceblue;">
+            </div>
+        </div>
+        <div class="row">
+            
+            {% for item in products %}
+            <div class="col-md-4 col-lg-3">
+                <div class="card my-3">
+                    <img src="{% if item.product_image %}{{ item.product_image.url }}{% else %}{% static 'images/default-product.jpg' %}{% endif %}" class="card-img-top" alt="Categories">
+                    {% if category_name %}
+                        <a href="{% url 'product_details' category_name item.name %}">
+                    {% else %}
+                        <a href="{% url 'product_detail' item.id %}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ item.name }}</h5> 
+                        <p class="card-title text-primary">{{ item.description }}</p>
+                        {% if category_name %}
+                            <a href="{% url 'product_details' category_name item.name %}" class="btn btn-primary btn-sm">View Details</a>
+                        {% else %}
+                            <a href="{% url 'product_detail' item.id %}" class="btn btn-primary btn-sm">View Details</a>
+                        {% endif %}
+                        <p class="card-text">
+                          <span class="float-start old_price"><s>Rs.{{item.original_price |stringformat:'d' }}</s></span>
+                          <span class="float-end new_price">Rs.{{ item.selling_price |stringformat:'d' }}</span>
+                        </p>
+                    </div>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock content %}
+

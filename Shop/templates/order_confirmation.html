@@ -1,0 +1,76 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block title %}
+    Order Confirmation
+{% endblock title %}
+
+{% block content %}
+<section class="bg-light py-4 my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card text-center">
+                    <div class="card-header bg-success text-white">
+                        <h3><i class="fa fa-check-circle"></i> Order Placed Successfully!</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="fa fa-shopping-bag fa-5x text-success mb-3"></i>
+                            <h4>Thank you for your order!</h4>
+                            <p class="text-muted">Your order has been placed successfully and is being processed.</p>
+                        </div>
+
+                        <div class="order-details mb-4">
+                            <h5>Order Details</h5>
+                            <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                            <p><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                            <p><strong>Total Amount:</strong> Rs. {{ order.total_amount }}</p>
+                            <p><strong>Status:</strong> <span class="badge bg-info">{{ order.get_status_display }}</span></p>
+                        </div>
+
+                        <div class="shipping-info mb-4">
+                            <h5>Shipping Information</h5>
+                            <p><strong>Name:</strong> {{ order.full_name }}</p>
+                            <p><strong>Email:</strong> {{ order.email }}</p>
+                            <p><strong>Address:</strong> {{ order.address }}, {{ order.city }} - {{ order.postal_code }}</p>
+                        </div>
+
+                        <div class="order-items mb-4">
+                            <h5>Order Items</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in order.items.all %}
+                                    <tr>
+                                        <td>{{ item.product.name }}</td>
+                                        <td>{{ item.quantity }}</td>
+                                        <td>Rs. {{ item.price }}</td>
+                                        <td>Rs. {{ item.total_price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'home' %}" class="btn btn-primary me-md-2">
+                                <i class="fa fa-home"></i> Continue Shopping
+                            </a>
+                            <a href="{% url 'products_index' %}" class="btn btn-outline-secondary">
+                                <i class="fa fa-shopping-bag"></i> Browse More Products
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

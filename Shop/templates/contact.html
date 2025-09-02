@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - BobbieStore</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* Contact Page Specific Styles */
+        .contact-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 60px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .contact-title {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            animation: slideInFromLeft 0.8s ease-out;
+        }
+
+        .contact-content {
+            color: #6c757d;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .contact-title {
+                font-size: 2rem;
+            }
+            
+            .contact-container {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .contact-content {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .contact-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-section">
+        <div class="contact-container">
+            <h1 class="contact-title">Contact Us</h1>
+            <h1 class="contact-content">If you have any questions, feel free to reach out to us at <a href="mailto:info@bobbiestore.com">info@bobbiestore.com</a></h1>
+        </div>
+    </div>
+</body>
+</html>
